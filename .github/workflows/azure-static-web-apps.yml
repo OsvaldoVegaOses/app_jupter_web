@@ -22,7 +22,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: false
+
+      - name: Fix repo permissions
+        run: sudo chown -R $USER:$USER .git
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
