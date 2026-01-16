@@ -365,6 +365,12 @@ import { Sparkles, Brain, Network, Database, ChevronRight, Activity, Share2, Sea
     const btn = document.getElementById('submit-btn') as HTMLButtonElement;
     const msg = document.getElementById('form-message') as HTMLDivElement;
 
+    // Nota: Para que el envío funcione en modo estático, usamos un servicio client-side.
+    // Reemplaza estos valores con tus credenciales de EmailJS o similar si deseas activarlo.
+    const SERVICE_ID = 'default_service';
+    const TEMPLATE_ID = 'template_contact';
+    const PUBLIC_KEY = 'your_public_key';
+
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -375,22 +381,19 @@ import { Sparkles, Brain, Network, Database, ChevronRight, Activity, Share2, Sea
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                // Simulamos el envío para la demo estática o integramos con un servicio externo
+                // En un entorno real, aquí llamarías a emailjs.send() o un webhook de Formspree
+                
+                console.log('Datos a enviar:', data);
+                
+                // Simulación de delay de red
+                await new Promise(resolve => setTimeout(resolve, 1500));
 
-                const result = await response.json();
-
-                if (response.ok) {
-                    msg.classList.remove('hidden', 'bg-red-500/10', 'text-red-400');
-                    msg.classList.add('bg-green-500/10', 'text-green-400');
-                    msg.innerHTML = '¡Mensaje enviado con éxito! Nos contactaremos pronto.';
-                    form.reset();
-                } else {
-                    throw new Error(result.error || 'Error al enviar');
-                }
+                msg.classList.remove('hidden', 'bg-red-500/10', 'text-red-400');
+                msg.classList.add('bg-green-500/10', 'text-green-400');
+                msg.innerHTML = '¡Mensaje enviado (Simulado)! Para producción, configura tus llaves de API.';
+                form.reset();
+                
             } catch (err: any) {
                 msg.classList.remove('hidden', 'bg-green-500/10', 'text-green-400');
                 msg.classList.add('bg-red-500/10', 'text-red-400');
