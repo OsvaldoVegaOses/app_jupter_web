@@ -21,5 +21,14 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "*"
+  },
+  "supportedArchitectures": {
+    "os": [
+      "win32",
+      "linux"
+    ],
+    "cpu": [
+      "x64"
+    ]
   }
 }
