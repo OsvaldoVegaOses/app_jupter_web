@@ -32,17 +32,29 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '18'
+
+      - name: Clean npm cache and modules
+        run: |
+          rm -rf node_modules package-lock.json
+          npm cache clean --force
 
       - name: Install dependencies
         run: |
-          npm ci --legacy-peer-deps
-          npm install --legacy-peer-deps --no-optional=false
-          npm rebuild @tailwindcss/oxide @rollup/rollup lightningcss
+          npm install --legacy-peer-deps
+          npm install @tailwindcss/oxide-linux-x64-gnu --force
 
       - name: Build Astro site
         run: npm run build
+
+      - name: Verify build output
+        run: |
+          echo "Checking dist folder contents:"
+          ls -la dist/
+          if [ ! -f "dist/index.html" ]; then
+            echo "ERROR: index.html not found in dist/"
+            exit 1
+          fi
 
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
@@ -51,24 +63,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "dist" # Directorio de los archivos construidos
+          app_location: "dist"
           api_location: ""
-          output_location: "" # Vacío porque ya estamos en la carpeta de salida
+          output_location: "."
           skip_app_build: true
-
-  close_pull_request_job:
-    if: >
-      github.event_name == 'pull_request' &&
-      github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: "close"
